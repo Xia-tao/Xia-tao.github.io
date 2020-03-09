@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="{CHARSET}">
+		<script type="text/javascript" src="three.js"></script>
+		<script src="https://cdn.bootcss.com/three.js/r83/three.js"></script>
+		<title>3D</title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var scene,camera,renderer;
+			function init(){
+			scene=new THREE.Scene();
+			camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+			renderer=new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth,window.innerHeight);
+			renderer.setClearColor(new THREE.Color(0xEEEEEE,1.0));
+			renderer.shadowMapEnabled=true;
+			//坐标轴
+			var axes=new THREE.AxisHelper(80);//参数为坐标轴长度
+			scene.add(axes);
+			//水平面
+			var planeGeometry=new THREE.PlaneGeometry(90,80);
+			var planeMaterial=new THREE.MeshLambertMaterial({color:0x00fff0});
+			var plane=new THREE.Mesh(planeGeometry,planeMaterial);
+			plane.receiveShadow = true;  // 平面接收阴影⭐️
+            plane.rotation.x = -0.5 * Math.PI;  // 绕X轴旋转90度
+            plane.position.x = 15;  // 平面坐标位置
+            plane.position.y = 0;
+            plane.position.z = 0;
+            scene.add(plane);
+			}
+			init();
+			function setPosition(obj,x,y,z){
+			obj.position.x=x;
+			obj.position.y=y;
+			obj.position.z=z;
+			}
+			var spotLight;
+			function lightSet(){
+	    spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-40, 40, 30);
+        spotLight.castShadow = true;    // 让光源产生阴影
+        scene.add(spotLight);
+			}
+			
+			//几何体
+			var squareGeometry=new THREE.BoxGeometry(4,4,4);
+			var squareMaterial=new THREE.MeshLambertMaterial({color:0x00aaff});
+			var square=new THREE.Mesh(squareGeometry,squareMaterial);
+			square.castShadow=true;
+			scene.add(square);
+			
+			
+			var squareGeometry=new THREE.BoxGeometry(1,4,1);
+			var squareMaterial=new THREE.MeshLambertMaterial({color:0x00aaff});
+			var leg=[];
+			var i;
+     		for(i=0;i<=1;i++)
+     		{
+     			leg[i]=new THREE.Mesh(squareGeometry,squareMaterial);
+     			leg[i].castShadow=true;
+     			scene.add(leg[i]);
+     		}
+			
+			
+			
+
+			var ballGeometry=new THREE.SphereGeometry(1.5,20,20);
+			var ballMaterial=new THREE.MeshLambertMaterial({color:0xff00000});
+			var ball=new THREE.Mesh(ballGeometry,ballMaterial);
+			ball.castShadow=true;
+			scene.add(ball);
+			var speed=0.05,flag=1;
+			function render(){
+				requestAnimationFrame(render);
+		
+				camera.lookAt(square.position);
+				renderer.render(scene,camera);
+//				square.rotation.y+=0.01;
+				if(flag==1)
+				{
+					
+					square.position.x+=speed;
+					if(square.position.x>30.9)
+					flag=0;
+				}
+				else
+				{
+					square.position.x-=speed;
+					if(square.position.x<-10)
+					flag=1;
+				}
+
+		setPosition(ball,square.position.x,square.position.y+3,square.position.z);
+		setPosition(leg[0],square.position.x,square.position.y-4,square.position.z+1.5);
+		setPosition(leg[1],square.position.x,square.position.y-4,square.position.z-1.5);
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		lightSet();
+		setPosition(camera,15,20,15);
+		setPosition(square,2,6,0);
+		camera.lookAt({x:0,y:0,z:0});
+		console.log(scene.position);
+		document.body.appendChild(renderer.domElement);
+		render();
+		</script>
+	</body>
+</html>
